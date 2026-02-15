@@ -32,7 +32,7 @@ ethernet:
   type: LAN8720
   mdc_pin: ${eth_mdc_pin}
   mdio_pin: ${eth_mdio_pin}
-  clk_mode: ${eth_clk_mode}
+  clk_mode: ${eth_clk_pin}
   phy_addr: ${eth_phy_addr}
   power_pin: ${eth_power_pin}
   # Obsługa trybu 1 (DHCP) i 4 (Manual Static)
@@ -67,5 +67,6 @@ web_server:
 
 api:
   reboot_timeout: 0s
+
 
 
