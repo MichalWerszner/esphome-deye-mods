@@ -138,8 +138,12 @@ logger:
   level: INFO
 
 api:
-  password: ${api_key}
+  // password: ${api_key}
+  password: !remove
+  encryption:
+    key: !secret api_encryption_key
   reboot_timeout: 15min
+
 
 ota:
   - platform: esphome
