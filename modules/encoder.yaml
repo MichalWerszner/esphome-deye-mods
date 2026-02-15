@@ -26,8 +26,11 @@ sensor:
             } 
             else if (id(oled_page) == 1) {
               // Strona MODBUS: Zmiana adresu
-              if (x > id(modbus_address)++;
-              elseif (x < id(modbus_address)--;
+              if (x > id(encoder_old_pos)) {
+                id(modbus_address)++;
+              } else if (x < id(encoder_old_pos)) {
+                id(modbus_address)--;
+              }
             }
             else {
               // Na pozostałych stronach obrót po prostu ręcznie przełącza strony
@@ -87,24 +90,23 @@ binary_sensor:
               
               // Jeśli jesteś na stronie RELAYS (4), kliknięcie przełącza stan przekaźnika
               if (id(oled_page) == 4) {
-                 id(relay1).toggle(); // Przykład dla R1
+                // Przykład dla R1
+                id(relay1).toggle(); 
               }
             } else {
               id(is_editing) = true; // Wejdź w tryb edycji
             }
-    on_double_click: 1s
-    then:
-      - lambda: |-
-          // Dwuklik to wyjście z edycji BEZ zapisu (anuluj)
-          id(is_editing) = false;
-          id(oled_page) = 0; // Powrót na stronę główną
+    on_double_click:
+      min_length: 50ms
+      max_length: 350ms
+      then:
+        - lambda: |-
+            // Dwuklik to wyjście z edycji BEZ zapisu (anuluj)
+            id(is_editing) = false;
+            id(oled_page) = 0; // Powrót na stronę główną
 
 # Timer powrotu do autoscrolla po 10s bezczynności
 interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
-
-
-
-
