@@ -124,6 +124,21 @@ ethernet:
   clk_mode: ${eth_clk_pin}
   phy_addr: ${eth_phy_addr}
   power_pin: ${eth_power_pin}
+  # Logika statycznego IP pobierana z Twoich globals
+  manual_ip: !lambda |-
+    if (id(network_mode_global) == 4) {
+      auto ip = network::IPAddress::from_string(id(lan_ip).c_str());
+      auto gw = network::IPAddress::from_string(id(lan_gateway).c_str());
+      auto sn = network::IPAddress::from_string(id(lan_mask).c_str());
+      if (ip.has_value()) {
+        network::ManualIP manual;
+        manual.static_ip = *ip;
+        manual.gateway = *gw;
+        manual.subnet = *sn;
+        return manual;
+      }
+    }
+    return {};
 
 # Używamy !extend, aby dopisać id do sekcji wifi stworzonej przez Lewa-Reka
 wifi:
