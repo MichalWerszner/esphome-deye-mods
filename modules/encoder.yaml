@@ -7,8 +7,7 @@ sensor:
     pin_b: ${encoder_dt}
     id: encoder_rot
     resolution: 4
-//    on_value:
-    on_rotate:
+    on_value:
       then:
         - lambda: |-
             // 1. Każdy obrót aktywuje tryb edycji i zatrzymuje autoscroll OLED
@@ -115,5 +114,6 @@ interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
+
 
 
