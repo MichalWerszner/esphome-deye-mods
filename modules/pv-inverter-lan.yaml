@@ -120,17 +120,21 @@ ethernet:
 
 # ===== WiFi / UART – upstream LewaRęka, z lambda do globals =====
 wifi:
-  ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
-  password: !lambda 'return id(wifi_password_global).state.c_str();'
+  #ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
+  #password: !lambda 'return id(wifi_password_global).state.c_str();'
   ap:
     # Użycie substytucji z wbudowanym identyfikatorem ESPHome
     ssid: "${name}-fallback"
     password: ${fallback_password}
-  manual_ip:
-    static_ip: !lambda 'return id(lan_ip).state.c_str();'
-    gateway: !lambda 'return id(lan_gateway).state.c_str();'
-    subnet: !lambda 'return id(lan_mask).state;'
-  use_dhcp: !lambda 'return id(lan_dhcp).state;'
+  #manual_ip:
+  #  static_ip: !lambda 'return id(lan_ip).state.c_str();'
+  #  gateway: !lambda 'return id(lan_gateway).state.c_str();'
+  #  subnet: !lambda 'return id(lan_mask).state;'
+  #use_dhcp: !lambda 'return id(lan_dhcp).state;'
+  networks:
+    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
+      password: !lambda 'return id(wifi_password_global).state.c_str();'
+      priority: -10 # Niższy priorytet niż Ethernet
     
 esphome:
   name: ${name}
