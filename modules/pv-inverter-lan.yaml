@@ -164,11 +164,6 @@ wifi:
   #  subnet: !lambda 'return id(lan_mask).state;'
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
 
-i2c:
-  sda: ${oled_sda}
-  scl: ${oled_scl}
-  scan: true
-
 uart:
   # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
   id: uart_modbus
@@ -182,3 +177,5 @@ modbus:
   id: modbus1
   uart_id: uart_modbus
   address: !lambda 'return id(modbus_address).state;'
+
+
