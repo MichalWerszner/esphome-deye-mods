@@ -44,7 +44,7 @@ substitutions:
   # UWAGA: W WT32-ETH01 piny MDC, MDIO i CLK są stałe i nie zmieniamy ich fizycznie.
   eth_mdc_pin: GPIO23
   eth_mdio_pin: GPIO18
-  eth_clk_mode: GPIO0_IN  # Kluczowe dla stabilności LAN
+  eth_clk_pin: GPIO0_IN  # Kluczowe dla stabilności LAN
   eth_power_pin: GPIO16   # Pin 12 na listwie (zasilanie PHY)
   eth_phy_addr: "1"
 
@@ -124,7 +124,7 @@ wifi:
   password: !lambda 'return id(wifi_password_global).state.c_str();'
   ap:
     # Użycie substytucji z wbudowanym identyfikatorem ESPHome
-    ssid: "${name}-fallback-${device_name_suffix}"
+    ssid: "${name}-fallback"
     password: ${fallback_password}
   manual_ip:
     static_ip: !lambda 'return id(lan_ip).state.c_str();'
@@ -133,11 +133,12 @@ wifi:
   use_dhcp: !lambda 'return id(lan_dhcp).state;'
     
 esphome:
-  name: "${name}-${device_name_suffix}"
-  friendly_name: ${name}
+  name: ${name}
+  name_add_mac_suffix: true # To doda sufiks automatycznie (np. modbus-gateway-a1b2c3)
+  friendly_name: "Modbus Gateway"
   project:
     name: "michalwerszner.deye_gateway"
-    version: "1.0"
+    version: "1.1"
 
 # Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
 esp32:
