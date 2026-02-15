@@ -33,7 +33,14 @@ display:
           id(ip_mode_static) ? "static" : "dhcp");
         it.printf(0, 48, id(font), "ID: %s", App.get_name().c_str());
       }
-
+      it.printf(0, 0, id(my_font), "IP: %s", network::get_ip_address().c_str());
+      const char *mode_str = "Unknown";
+      if (id(network_mode_global) == 1) mode_str = "1: LAN DHCP";
+      if (id(network_mode_global) == 2) mode_str = "2: WiFi DHCP";
+      if (id(network_mode_global) == 3) mode_str = "3: WiFi AP";
+      if (id(network_mode_global) == 4) mode_str = "4: MANUAL";
+      it.printf(0, 20, id(my_font), "Tryb: %s", mode_str);
+      
       // ===== PAGE 1 – MODBUS =====
       if (id(oled_page) == 1) {
         it.printf(0, 0, id(font), "Modbus");
@@ -94,5 +101,6 @@ display:
           id(relay_page) = (id(relay_page) + 1) % ((idx + 3) / 4);
         }
       }
+
 
 
