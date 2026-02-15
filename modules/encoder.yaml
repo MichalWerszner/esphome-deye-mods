@@ -26,8 +26,8 @@ sensor:
             } 
             else if (id(oled_page) == 1) {
               // Strona MODBUS: Zmiana adresu
-              if (x > id(encoder_old_pos)) id(modbus_address)++;
-              elseif (x < id(encoder_old_pos)) id(modbus_address)--;
+              if (x > id(modbus_address)++;
+              elseif (x < id(modbus_address)--;
             }
             else {
               // Na pozostałych stronach obrót po prostu ręcznie przełącza strony
@@ -104,6 +104,7 @@ interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
+
 
 
 
