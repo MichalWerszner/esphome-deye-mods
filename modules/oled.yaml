@@ -1,11 +1,3 @@
-globals:
-  - id: oled_page
-    type: int
-    initial_value: 0
-  - id: relay_page
-    type: int
-    initial_value: 0
-
 interval:
   - interval: 2s
     then:
@@ -102,4 +94,5 @@ display:
           id(relay_page) = (id(relay_page) + 1) % ((idx + 3) / 4);
         }
       }
+
 
