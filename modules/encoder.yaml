@@ -10,12 +10,21 @@ sensor:
       - lambda: |-
           // logika zmiany wartości IP, maski, gateway, DHCP/static
           // zapis do globals
+          // Przykład: zmiana adresu Modbus przez obrót
+          if (x > id(modbus_address).state) {
+            id(modbus_address).state++;
+          } else {
+            id(modbus_address).state--;
+          }
 switch:
   - platform: gpio
-    pin: ${encoder_sw}
+    pin: 
+      number: ${encoder_sw}
+      inverted: true
+      mode: INPUT_PULLUP
     name: "Encoder Button"
     id: encoder_sw_btn
     on_press:
       then:
-        - lambda: |-
-            // potwierdzenie zmian, zapis do flash (globals)
+        - logger.log: "Przycisk naciśnięty - zatwierdź zmiany"
+        - lambda: 'id(modbus_address).execute_restore();' # Przykładowy zapis do flash
