@@ -1,42 +1,38 @@
 globals:
-  # --- NETWORK LAN ---
-  - id: lan_ip
-    type: std::string
-    restore_value: true
-    initial_value: ""
-  - id: lan_mask
-    type: int
-    restore_value: true
-    initial_value: 24
-  - id: lan_gateway
-    type: std::string
-    restore_value: true
-    initial_value: ""
-  - id: lan_dhcp
-    type: bool
-    restore_value: true
-    initial_value: true
-
-  # --- WIFI ---
+  # WiFi Konfiguracja
   - id: wifi_ssid_global
     type: std::string
-    restore_value: true
-    initial_value: !lambda 'return id(wifi_ssid).c_str();'
+    restore_value: yes
+    initial_value: '"${wifi_ssid}"' # Bierze z Twoich substitutions na start
   - id: wifi_password_global
     type: std::string
-    restore_value: true
-    initial_value: !lambda 'return id(wifi_password).c_str();'
-  - id: wifi_dhcp
-    type: bool
-    restore_value: true
-    initial_value: true
+    restore_value: yes
+    initial_value: '"${wifi_password}"'
 
-  # --- MODBUS ---
-  - id: modbus_address
-    type: int
-    restore_value: true
-    initial_value: !lambda 'return (int) strtol(id(modbus_inverter_address).c_str(), nullptr, 0);'
+  # Sieć IP
+  - id: lan_dhcp
+    type: bool
+    restore_value: yes
+    initial_value: 'true'
+  - id: lan_ip
+    type: std::string
+    restore_value: yes
+    initial_value: '"192.168.1.100"'
+  - id: lan_gateway
+    type: std::string
+    restore_value: yes
+    initial_value: '"192.168.1.1"'
+  - id: lan_mask
+    type: std::string
+    restore_value: yes
+    initial_value: '"255.255.255.0"'
+
+  # Modbus Parametry
   - id: modbus_baud
     type: int
-    restore_value: true
-    initial_value: 115200
+    restore_value: yes
+    initial_value: '${baud_rate}'
+  - id: modbus_address
+    type: int
+    restore_value: yes
+    initial_value: '${modbus_inverter_address}'
