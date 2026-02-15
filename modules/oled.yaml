@@ -14,11 +14,17 @@ interval:
             // id(edit_timeout)++; (można dodać dodatkowy licznik)
           }
 font:
-  - file: "https://github.com/google/fonts/raw/main/apache/roboto/static/Roboto-Regular.ttf"
+  - file:
+      type: gfonts
+      family: Roboto
+      weight: 400
     id: my_font
     size: 10
 
-  - file: "https://github.com/google/fonts/raw/main/apache/roboto/static/Roboto-Regular.ttf"
+  - file:
+      type: gfonts
+      family: Roboto
+      weight: 400
     id: font_small
     size: 8
 
@@ -103,6 +109,7 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
 
