@@ -11,7 +11,7 @@ sensor:
       then:
         - lambda: |-
             // 1. Każdy obrót aktywuje tryb edycji i zatrzymuje autoscroll OLED
-            id(is_editing) = true; // Zatrzymaj autoscroll OLED
+            id(is_editing) = true; 
           
             // Logika zmiany wartości IP, maski, gateway, DHCP/static - zależna od aktualnej strony OLED
             // zapis do globals
@@ -83,10 +83,12 @@ binary_sensor:
               // Zatwierdzenie zmian
               id(network_mode_global).execute_restore();
               id(modbus_address).execute_restore();
-              id(is_editing) = false; // Powrót do autoscrolla
+              // Powrót do autoscrolla
+              id(is_editing) = false; 
 
               // Jeśli zmieniliśmy tryb sieci, wymagany reboot by przełączyć interfejsy
-              if (id(oled_page) == 0) App.reboot(); // Reboot tylko przy zmianie sieci
+              // Reboot tylko przy zmianie sieci
+              if (id(oled_page) == 0) App.reboot(); 
               
               // Jeśli jesteś na stronie RELAYS (4), kliknięcie przełącza stan przekaźnika
               if (id(oled_page) == 4) {
@@ -94,7 +96,8 @@ binary_sensor:
                 id(relay1).toggle(); 
               }
             } else {
-              id(is_editing) = true; // Wejdź w tryb edycji
+              // Wejdź w tryb edycji
+              id(is_editing) = true; 
             }
     on_double_click:
       min_length: 50ms
@@ -103,10 +106,12 @@ binary_sensor:
         - lambda: |-
             // Dwuklik to wyjście z edycji BEZ zapisu (anuluj)
             id(is_editing) = false;
-            id(oled_page) = 0; // Powrót na stronę główną
+            // Powrót na stronę główną
+            id(oled_page) = 0; 
 
 # Timer powrotu do autoscrolla po 10s bezczynności
 interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
+
