@@ -84,7 +84,21 @@ substitutions:
   tx_pin: GPIO5  # Pin 9 na listwie
   rx_pin: GPIO36 # Pin 13 na listwie (Input only - idealny dla RX)
   baud_rate: "9600"
- 
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: true # To doda sufiks automatycznie (np. modbus-gateway-a1b2c3)
+  friendly_name: "Modbus Gateway"
+  project:
+    name: "michalwerszner.deye_gateway"
+    version: "1.1"
+
+# Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
 packages:
 # MODUŁY Z GITHUBA 
   my_logic:
@@ -109,7 +123,16 @@ packages:
       pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P)
       # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
 
+logger:
+#  level: VERBOSE # VERBOSE / DEBUG / INFO / WARN
+  level: INFO
 
+api:
+  password: ${api_key}
+
+ota:
+  - platform: esphome
+    password: ${ota_password}
 
 # ===== WiFi / UART – upstream LewaRęka, z lambda do globals =====
 wifi:
@@ -130,20 +153,10 @@ wifi:
   #  subnet: !lambda 'return id(lan_mask).state;'
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
 
-    
-esphome:
-  name: ${name}
-  name_add_mac_suffix: true # To doda sufiks automatycznie (np. modbus-gateway-a1b2c3)
-  friendly_name: "Modbus Gateway"
-  project:
-    name: "michalwerszner.deye_gateway"
-    version: "1.1"
-
-# Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
-esp32:
-  board: esp32dev
-  framework:
-    type: arduino
+i2c:
+  sda: ${oled_sda}
+  scl: ${oled_scl}
+  scan: true
 
 uart:
   # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
@@ -159,11 +172,4 @@ modbus:
   uart_id: uart_modbus
   address: !lambda 'return id(modbus_address).state;'
 
-i2c:
-  sda: ${oled_sda}
-  scl: ${oled_scl}
-  scan: true
 
-logger:
-#  level: VERBOSE # VERBOSE / DEBUG / INFO / WARN
-  level: INFO
