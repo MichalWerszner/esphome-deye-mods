@@ -32,6 +32,9 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: encoder_old_pos
+    type: int
+    initial_value: '0'
   
   # --- LAN / DHCP Config ---
   - id: lan_dhcp
@@ -68,4 +71,5 @@ sensor:
   - platform: uptime
     id: uptime_sensor
     update_interval: 60s
+
 
