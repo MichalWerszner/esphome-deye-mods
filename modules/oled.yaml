@@ -14,9 +14,15 @@ interval:
             // id(edit_timeout)++; (można dodać dodatkowy licznik)
           }
 font:
-  - file: "fonts/arial.ttf"
-    id: font
+  - file:
+      url: https://github.com/google/fonts/raw/main/apache/robotomono/RobotoMono-Regular.ttf
+    id: my_font # Zmienione z 'font', żeby nie było konfliktu
     size: 10
+
+  - file:
+      url: https://github.com/google/fonts/raw/main/apache/robotomono/RobotoMono-Regular.ttf
+    id: font_small
+    size: 8
 
 i2c:
   sda: ${oled_sda}
@@ -34,45 +40,45 @@ display:
 
       // ===== PAGE 0 – NETWORK =====
       if (id(oled_page) == 0) {
-        it.printf(0, 0, id(font), "NET: %s", 
+        it.printf(0, 0, id(my_font), "NET: %s", 
           (id(network_mode_global) == 1) ? "1: LAN DHCP" :
           (id(network_mode_global) == 2) ? "2: WiFi DHCP" :
           (id(network_mode_global) == 3) ? "3: WiFi AP" : "4: MANUAL");
 
-        it.printf(0, 12, id(font), "IP: %s", network::get_ip_address().c_str());
+        it.printf(0, 12, id(my_font), "IP: %s", network::get_ip_address().c_str());
         
-        it.printf(0, 24, id(font), "Status: %s", 
+        it.printf(0, 24, id(my_font), "Status: %s", 
           network::is_connected() ? "Connected" : "Searching...");
 
-        if (id(is_editing)) it.print(0, 48, id(font), "> EDIT MODE <");
-        else it.printf(0, 48, id(font), "ID: %s", App.get_name().c_str());
+        if (id(is_editing)) it.print(0, 48, id(my_font), "> EDIT MODE <");
+        else it.printf(0, 48, id(my_font), "ID: %s", App.get_name().c_str());
       }
 
       // ===== PAGE 1 – MODBUS =====
       if (id(oled_page) == 1) {
-        it.printf(0, 0, id(font), "Modbus Config");
-        it.printf(0, 15, id(font), "Addr: 0x%02X %s", id(modbus_address), id(is_editing) ? "<-" : "");
-        it.printf(0, 30, id(font), "Baud: %d", id(modbus_baud));
-        if (id(is_editing)) it.print(0, 50, id(font), "[Click to Save]");
+        it.printf(0, 0, id(my_font), "Modbus Config");
+        it.printf(0, 15, id(my_font), "Addr: 0x%02X %s", id(modbus_address), id(is_editing) ? "<-" : "");
+        it.printf(0, 30, id(my_font), "Baud: %d", id(modbus_baud));
+        if (id(is_editing)) it.print(0, 50, id(my_font), "[Click to Save]");
       }
 
       // ===== PAGE 2 – INVERTER =====
       if (id(oled_page) == 2) {
-        it.printf(0, 0, id(font), "Inverter Data");
-        it.printf(0, 12, id(font), "Charge %dA", (int)id(max_charge_current).state);
-        it.printf(0, 24, id(font), "Sell %dW", (int)id(max_sell_power).state);
-        it.printf(0, 36, id(font), "Mode: %s", id(system_work_mode).state.c_str());
+        it.printf(0, 0, id(my_font), "Inverter Data");
+        it.printf(0, 12, id(my_font), "Charge %dA", (int)id(max_charge_current).state);
+        it.printf(0, 24, id(my_font), "Sell %dW", (int)id(max_sell_power).state);
+        it.printf(0, 36, id(my_font), "Mode: %s", id(system_work_mode).state.c_str());
       }
 
       // ===== PAGE 3 – ENV (Czujniki) =====
       if (id(oled_page) == 3) {
         int y = 0;
-        it.print(0, y, id(font), "Environment:"); y += 12;
+        it.print(0, y, id(my_font), "Environment:"); y += 12;
         if (id(dht_temp).has_state()) {
-          it.printf(0, y, id(font), "DHT: %.1fC | %.0f%%", id(dht_temp).state, id(dht_hum).state); y += 12;
+          it.printf(0, y, id(my_font), "DHT: %.1fC | %.0f%%", id(dht_temp).state, id(dht_hum).state); y += 12;
         }
         if (id(ds18b20_1).has_state()) {
-          it.printf(0, y, id(font), "DS1: %.1fC", id(ds18b20_1).state);
+          it.printf(0, y, id(my_font), "DS1: %.1fC", id(ds18b20_1).state);
         }
       }
 
@@ -83,7 +89,7 @@ display:
         auto draw_relay = [&](int n, auto &relay) {
           if (relay.has_state()) {
             if (idx / 4 == id(relay_page) && shown < 4) {
-              it.printf(0, shown * 12, id(font), "R%d: %s %s", n, 
+              it.printf(0, shown * 12, id(my_font), "R%d: %s %s", n, 
                 relay.state ? "ON" : "OFF", 
                 (id(is_editing) && (shown == 0)) ? "<-" : ""); // Uproszczony wskaźnik edycji
               shown++;
@@ -99,5 +105,6 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
