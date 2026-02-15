@@ -32,13 +32,17 @@ substitutions:
 
   enable_sync_time: false # true, false - Enable time sync with HomeAssistant (Deye 3P inverters only)
 
+# WYBÓR TRYBU PRACY (Odkomentuj tylko jeden!)
+  # network_mode: "WIFI" # dla modułu ESP32
+  network_mode: "ETHERNET" # dla modułu WT32-ETH01 lub ESP32 + LAN8720
 
   # ===== MODUŁY – włącz / wyłącz =====
   enable_ethernet: "true"
   enable_oled: "true"
-  enable_sensors: "true"
-  enable_relays: "true"
   enable_encoder: "true"
+  enable_sensors: "true"
+  enable_relays: "false"
+  
 
   # ===== ETHERNET (Konfiguracja sprzętowa WT32-ETH01) =====
   # UWAGA: W WT32-ETH01 piny MDC, MDIO i CLK są stałe i nie zmieniamy ich fizycznie.
@@ -53,8 +57,14 @@ substitutions:
   oled_sda: GPIO14  # Pin 15 na listwie
   oled_scl: GPIO15  # Pin 14 na listwie
 
+  # ===== ENCODER KY-040 =====
+  # Wykorzystujemy piny CFG i 485_EN z dokumentacji
+  encoder_clk: GPIO32 # Pin 2 na listwie
+  encoder_dt: GPIO33  # Pin 3 na listwie
+  encoder_sw: GPIO35  # Pin 17 na listwie (Input only - idealny dla przycisku)
+
   # ===== DHT / DS =====
-  dht_pin: GPIO4 # 10k pullup DHT (jeśli goły sensor)  # Pin 18 na listwie (obsługuje I/O)
+  # dht_pin: GPIO4 # 10k pullup DHT (jeśli goły sensor)  # Pin 18 na listwie (obsługuje I/O)
   dht_model: DHT22
   ds18b20_pin: GPIO2 # ds18b20_pin: GPIO26 ESP+LAN ; 4.7k pullup OneWire między DATA a 3.3V, Pin 19 na listwie (Uwaga: musi być HIGH przy starcie!)
 
@@ -72,12 +82,6 @@ substitutions:
   relay11_pin: "-1"
   relay12_pin: "-1"
 
-  # ===== ENCODER KY-040 =====
-  # Wykorzystujemy piny CFG i 485_EN z dokumentacji
-  encoder_clk: GPIO32 # Pin 2 na listwie
-  encoder_dt: GPIO33  # Pin 3 na listwie
-  encoder_sw: GPIO35  # Pin 17 na listwie (Input only - idealny dla przycisku)
-
   # ===== UART / Modbus ===== terminator 120Ω jeśli długi kabel
   # MODYFIKACJA: GPIO17 jest zajęte przez zegar 50MHz! Używamy GPIO5.
   modbus_inverter_address: "0x01" # Default Modbus address, should be changed to match inverter settings
@@ -87,10 +91,12 @@ substitutions:
 
 esphome:
   name: ${name}
-  name_add_mac_suffix: true # To doda sufiks automatycznie (np. modbus-gateway-a1b2c3)
+  name_add_mac_suffix: true # To doda automatycznie unikalny SSID i hostname mDNS (np. modbus-gateway-a1b2c3)
   platformio_options:
     build_flags:
       - -DCONFIG_ESP32_WIFI_ENABLED
+      - -DUSE_ETHERNET
+      - -DUSE_WIFI
   friendly_name: "Modbus Gateway"
   project:
     name: "michalwerszner.deye_gateway"
@@ -109,11 +115,12 @@ packages:
     ref: main
     files:
       - modules/globals.yaml
+      - modules/network_selector.yaml
       - modules/ethernet.yaml
-      - modules/sensors.yaml
-      - modules/relay.yaml
       - modules/oled.yaml
       - modules/encoder.yaml
+      - modules/sensors.yaml
+      - modules/relay.yaml
     refresh: 5min # Na czas testów dajemy 5 minut
 
   # BAZA OD LEWA-REKA
@@ -175,5 +182,3 @@ modbus:
   id: modbus1
   uart_id: uart_modbus
   address: !lambda 'return id(modbus_address).state;'
-
-
