@@ -1,3 +1,6 @@
+# Copyright 2026 MichalWerszner
+# Moduł zarządzania siecią: LAN, WiFi, AP, Manual
+
 esphome:
   includes:
     - "lwip/ip_addr.h"
@@ -7,7 +10,8 @@ esphome:
       - -DCONFIG_ESP32_WIFI_ENABLED
       - -DUSE_ETHERNET
 
-# Logika przełączania po 60s braku sieci
+# Logika przełączania po 60s braku połączenia do sieci
+# 1. LAN DHCP -> 2. WiFi DHCP -> 3. WiFi AP
 interval:
   - interval: 60s
     then:
@@ -31,7 +35,7 @@ ethernet:
   clk_mode: ${eth_clk_mode}
   phy_addr: ${eth_phy_addr}
   power_pin: ${eth_power_pin}
-  # Tryb 1: DHCP, Tryb 4: Statyk
+  # Obsługa trybu 1 (DHCP) i 4 (Manual Static)
   manual_ip: !lambda |-
     if (id(network_mode_global) == 4) {
       auto ip = network::IPAddress::from_string(id(lan_ip).state);
@@ -63,3 +67,4 @@ web_server:
 
 api:
   reboot_timeout: 0s
+
