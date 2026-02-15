@@ -2,6 +2,7 @@
 one_wire:
   - platform: gpio
     pin: ${ds18b20_pin}
+    id: my_1wire_bus
 
 # DHT22 / DHT11 / AM2302
 sensor:
@@ -33,4 +34,5 @@ sensor:
   - platform: uptime
     name: "Gateway Uptime"
     id: gateway_uptime
+
 
