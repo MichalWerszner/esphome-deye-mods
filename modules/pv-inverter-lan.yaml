@@ -64,7 +64,7 @@ substitutions:
   encoder_sw: GPIO35  # Pin 17 na listwie (Input only - idealny dla przycisku)
 
   # ===== DHT / DS =====
-  # dht_pin: GPIO4 # 10k pullup DHT (jeśli goły sensor)  # Pin 18 na listwie (obsługuje I/O)
+  dht_pin: GPIO4 # 10k pullup DHT (jeśli goły sensor)  # Pin 18 na listwie (obsługuje I/O)
   dht_model: DHT22
   ds18b20_pin: GPIO2 # ds18b20_pin: GPIO26 ESP+LAN ; 4.7k pullup OneWire między DATA a 3.3V, Pin 19 na listwie (Uwaga: musi być HIGH przy starcie!)
 
@@ -100,7 +100,8 @@ esphome:
   friendly_name: "Modbus Gateway"
   project:
     name: "michalwerszner.deye_gateway"
-    version: "1.1"
+    version: "1.1.1"
+  includes: !override []
 
 # Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
 esp32:
@@ -120,7 +121,7 @@ packages:
       # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
 
   # MODUŁY Z GITHUBA 
-  my_logic:
+  my_extension:
     url: https://github.com/MichalWerszner/esphome-deye-mods
     ref: main
     files:
@@ -130,7 +131,7 @@ packages:
       - modules/encoder.yaml
       - modules/sensors.yaml
       - modules/relay.yaml
-    refresh: 5min # Na czas testów dajemy 5 minut
+    refresh: 1min # Na czas testów dajemy 5 minut
 
 
 logger:
@@ -138,19 +139,19 @@ logger:
   level: INFO
 
 api:
-  // password: ${api_key}
   password: !remove
   encryption:
     key: !secret api_encryption_key
   reboot_timeout: 15min
-
 
 ota:
   - platform: esphome
     password: ${ota_password}
 
 # ===== WiFi / UART – upstream LewaRęka, z lambda do globals =====
-wifi: !extend
+# wifi: !remove
+# wifi: !extend
+# wifi: !override
   # Zamiast bezpośredniego ssid/password, używamy listy networks z priorytetem
   #networks:
   #  - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
@@ -158,15 +159,25 @@ wifi: !extend
   #    priority: 1 # Niższy priorytet niż Ethernet 
   #ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
   #password: !lambda 'return id(wifi_password_global).state.c_str();'
-  ap:
+#  ap:
     # Użycie substytucji z wbudowanym identyfikatorem ESPHome
-    ssid: "${name}-fallback"
-    password: ${fallback_password}
+#    ssid: "${name}-fallback"
+#    password: ${fallback_password}
   #manual_ip:
   #  static_ip: !lambda 'return id(lan_ip).state.c_str();'
   #  gateway: !lambda 'return id(lan_gateway).state.c_str();'
   #  subnet: !lambda 'return id(lan_mask).state;'
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
+wifi: !remove
+
+wifi:
+  networks:
+    - ssid: ${wifi_ssid}
+      password: ${wifi_password}
+  ap:
+    ssid: "${name}-fallback"
+    password: ${fallback_password}
+
 
 uart:
   # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
@@ -176,10 +187,9 @@ uart:
   #baud_rate: !lambda 'return id(modbus_baud).state;'
   baud_rate: 9600 # Na start na sztywno, by uniknąć błędów inicjalizacji
 
-modbus:
+#modbus:
 #  flow_control_pin: GPIO4 # Uncomment and set appropriate pin if your TTL converter requires it
-  id: modbus1
-  uart_id: uart_modbus
-  address: !lambda 'return id(modbus_address).state;'
-
+#  id: modbus1
+#  uart_id: uart_modbus
+#  address: !lambda 'return id(modbus_address).state;'
 
