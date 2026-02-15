@@ -1,8 +1,15 @@
 ethernet:
 # To 'id' pozwoli nam odwoływać się do ethernetu
   id: eth_interface
-  # Logika wyboru IP - jeśli DHCP wyłączone w globals, ustaw statyka
+  # Piny bierzemy z substitutions, żeby moduł był uniwersalny
+  type: LAN8720
+  mdc_pin: ${eth_mdc_pin}
+  mdio_pin: ${eth_mdio_pin}
+  clk_mode: ${eth_clk_mode}
+  phy_addr: ${eth_phy_addr}
+  power_pin: ${eth_power_pin}
   
+  # Logika wyboru IP - jeśli DHCP wyłączone w globals, ustaw statyka
   manual_ip:!lambda |-
     if (id(lan_dhcp).state) {
       return {}; 
@@ -18,4 +25,5 @@ ethernet:
 # Jeśli kabel jest wpięty, Ethernet ma pierwszeństwo (0), WiFi ma (1)
 api:
   reboot_timeout: 15min
+
 
