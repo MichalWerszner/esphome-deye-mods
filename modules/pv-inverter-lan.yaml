@@ -109,7 +109,17 @@ esp32:
     type: arduino
 
 packages:
-# MODUŁY Z GITHUBA 
+  # BAZA OD LEWA-REKA
+  pv_inverter:
+    url: https://github.com/Lewa-Reka/esphome-deye-inverter
+    refresh: 12h
+    files:
+      ### Use the appropriate file for your inverter, uncomment the one you want to use ###
+      # pv_inverter/deye_hybrid_1p_lv.yaml # SG0XLP1 Low Voltage (1P)
+      pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P)
+      # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
+
+  # MODUŁY Z GITHUBA 
   my_logic:
     url: https://github.com/MichalWerszner/esphome-deye-mods
     ref: main
@@ -122,15 +132,6 @@ packages:
       - modules/relay.yaml
     refresh: 5min # Na czas testów dajemy 5 minut
 
-  # BAZA OD LEWA-REKA
-  pv_inverter:
-    url: https://github.com/Lewa-Reka/esphome-deye-inverter
-    refresh: 12h
-    files:
-      ### Use the appropriate file for your inverter, uncomment the one you want to use ###
-      # pv_inverter/deye_hybrid_1p_lv.yaml # SG0XLP1 Low Voltage (1P)
-      pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P)
-      # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
 
 logger:
 #  level: VERBOSE # VERBOSE / DEBUG / INFO / WARN
@@ -145,7 +146,7 @@ ota:
     password: ${ota_password}
 
 # ===== WiFi / UART – upstream LewaRęka, z lambda do globals =====
-wifi:
+wifi: !extend
   # Zamiast bezpośredniego ssid/password, używamy listy networks z priorytetem
   #networks:
   #  - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
