@@ -52,14 +52,14 @@ ethernet:
     return {}; // Dla trybu 1 (DHCP) i innych zwraca puste (czyli DHCP)
 
 # 2. WiFi DHCP & 3. Fallback AP
-wifi:
-  # WiFi jest aktywne tylko w trybach 2 i 3
-  networks:
-    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
-      password: !lambda 'return id(wifi_password_global).state.c_str();'
-  ap:
-    ssid: "${name}-fallback"
-    password: ${fallback_password}
+#wifi:
+#  # WiFi jest aktywne tylko w trybach 2 i 3
+#  networks:
+#    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
+#      password: !lambda 'return id(wifi_password_global).state.c_str();'
+#  ap:
+#    ssid: "${name}-fallback"
+#    password: ${fallback_password}
 
 # Punkt 3: Strona do zmiany konfiguracji (dostępna w każdym trybie, jeśli jest IP)
 web_server:
@@ -67,4 +67,5 @@ web_server:
 
 api:
   reboot_timeout: 0s
+
 
