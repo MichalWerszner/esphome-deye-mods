@@ -10,6 +10,7 @@ ethernet:
   manual_ip:
     static_ip: !lambda 'return id(lan_ip).state.c_str();'
     gateway: !lambda 'return id(lan_gateway).state.c_str();'
-    subnet: !lambda 'return id(lan_mask).state;'
+    subnet: !lambda 'return id(lan_mask).state.c_str();'
   use_dhcp: !lambda 'return id(lan_dhcp).state;'
+
 
