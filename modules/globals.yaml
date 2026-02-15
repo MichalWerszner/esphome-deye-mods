@@ -1,3 +1,6 @@
+# Copyright 2026 MichalWerszner
+# Globalne zmienne i sensory systemowe
+
 globals:
   # WiFi Konfiguracja
   - id: wifi_ssid_global
@@ -10,17 +13,33 @@ globals:
     initial_value: '"${wifi_password}"'
   
   # --- Network Mode Control ---
-  # 0: Ethernet DHCP, 1: WiFi DHCP, 2: Static IP (Manual)
+  # 1: LAN DHCP, 2: WiFi DHCP, 3: WiFi AP, 4: Manual Static
   - id: network_mode_global
     type: int
     restore_value: yes
-    initial_value: '0'
+    initial_value: '1'
   
-  # Sieć IP
+  # --- UI & Interakcja ---
+  - id: oled_page
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: relay_page
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: is_editing
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  
+  # --- LAN / DHCP Config ---
   - id: lan_dhcp
     type: bool
     restore_value: yes
     initial_value: 'true'
+  
+  # --- LAN / Static Config ---    
   - id: lan_ip
     type: std::string
     restore_value: yes
@@ -44,13 +63,9 @@ globals:
     restore_value: yes
     initial_value: '${modbus_inverter_address}'
 
-  - id: oled_page
-    type: int
-    restore_value: yes
-    initial_value: '0'  # Musi być w cudzysłowie!
-
-  - id: relay_page
-    type: int
-    restore_value: yes
-    initial_value: '0'  # Dodaj typ i wartość początkową
+# Sensory systemowe
+sensor:
+  - platform: uptime
+    id: uptime_sensor
+    update_interval: 60s
 
