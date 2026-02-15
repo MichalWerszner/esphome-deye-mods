@@ -39,6 +39,7 @@ display:
           id(netmask_bits).state);
         it.printf(0, 24, id(font), "%s",
           id(ip_mode_static) ? "static" : "dhcp");
+        it.printf(0, 48, id(font), "ID: %s", App.get_name().c_str());
       }
 
       // ===== PAGE 1 – MODBUS =====
@@ -101,3 +102,4 @@ display:
           id(relay_page) = (id(relay_page) + 1) % ((idx + 3) / 4);
         }
       }
+
