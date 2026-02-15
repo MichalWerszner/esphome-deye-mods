@@ -18,29 +18,29 @@ sensor:
             // Przykład: zmiana adresu Modbus przez obrót
             if (id(oled_page) == 0) {
               // Strona NET: Zmiana trybu 1-4
-              if (x > id(encoder_rot).id(encoder_old_pos)) {
+              if (x > id(encoder_old_pos)) {
                 if (id(network_mode_global) < 4) id(network_mode_global)++;
-              } else if (x < id(encoder_rot).id(encoder_old_pos)) {
+              } else if (x < id(encoder_old_pos)) {
                 if (id(network_mode_global) > 1) id(network_mode_global)--;
               }
             } 
             else if (id(oled_page) == 1) {
               // Strona MODBUS: Zmiana adresu
-              if (x > id(encoder_rot).id(encoder_old_pos)) id(modbus_address)++;
-              elseif (x < id(encoder_rot).id(encoder_old_pos)) id(modbus_address)--;
+              if (x > id(encoder_old_pos)) id(modbus_address)++;
+              elseif (x < id(encoder_old_pos)) id(modbus_address)--;
             }
             else {
               // Na pozostałych stronach obrót po prostu ręcznie przełącza strony
-              if (x > id(encoder_rot).id(encoder_old_pos)) {
+              if (x > id(encoder_old_pos)) {
                 id(oled_page)++;
                 if (id(oled_page) > 4) id(oled_page) = 0;
-              } else if (x < id(encoder_rot).id(encoder_old_pos)) {
+              } else if (x < id(encoder_old_pos)) {
                 if (id(oled_page) == 0) id(oled_page) = 4;
                 else id(oled_page)--;
               }
             }
             // Aktualizacja starej wartości do porównania przy następnym ruchu
-            id(encoder_rot).id(encoder_old_pos) = x;
+            id(encoder_old_pos) = x;
 
 //    on_clockwise:
 //      - lambda: |-
@@ -104,5 +104,6 @@ interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
+
 
 
