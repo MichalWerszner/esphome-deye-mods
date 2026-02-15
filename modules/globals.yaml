@@ -36,3 +36,13 @@ globals:
     type: int
     restore_value: yes
     initial_value: '${modbus_inverter_address}'
+
+  - id: oled_page
+    type: int
+    restore_value: yes
+    initial_value: '0'  # Musi być w cudzysłowie!
+
+  - id: relay_page
+    type: int
+    restore_value: yes
+    initial_value: '0'  # Dodaj typ i wartość początkową
