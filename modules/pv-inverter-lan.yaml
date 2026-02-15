@@ -47,6 +47,15 @@ substitutions:
   eth_clk_pin: GPIO0_IN  # Kluczowe dla stabilności LAN
   eth_power_pin: GPIO16   # Pin 12 na listwie (zasilanie PHY)
   eth_phy_addr: "1"
+# Konfiguracja Ethernet dla WT32-ETH01
+#ethernet:
+#  type: LAN8720
+#  mdc_pin: GPIO23
+#  mdio_pin: GPIO18
+#  clk_mode: GPIO0_IN
+#  phy_addr: 1
+#  power_pin: GPIO16
+
 
   # ===== OLED SSD1306 ===== adres I2C = 0x3C zwykle; 3.3V nie 5V
   # Przeniesione na piny, które obsługują wyjście
@@ -109,17 +118,15 @@ packages:
       pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P)
       # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
 
-# Konfiguracja Ethernet dla WT32-ETH01
-ethernet:
-  type: LAN8720
-  mdc_pin: GPIO23
-  mdio_pin: GPIO18
-  clk_mode: GPIO0_IN
-  phy_addr: 1
-  power_pin: GPIO16
+
 
 # ===== WiFi / UART – upstream LewaRęka, z lambda do globals =====
 wifi:
+  # Zamiast bezpośredniego ssid/password, używamy listy networks z priorytetem
+   networks:
+    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
+      password: !lambda 'return id(wifi_password_global).state.c_str();'
+      priority: 1 # Niższy priorytet niż Ethernet 
   #ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
   #password: !lambda 'return id(wifi_password_global).state.c_str();'
   ap:
@@ -131,10 +138,7 @@ wifi:
   #  gateway: !lambda 'return id(lan_gateway).state.c_str();'
   #  subnet: !lambda 'return id(lan_mask).state;'
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
-  networks:
-    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
-      password: !lambda 'return id(wifi_password_global).state.c_str();'
-      priority: -10 # Niższy priorytet niż Ethernet
+
     
 esphome:
   name: ${name}
