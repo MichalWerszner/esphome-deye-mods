@@ -1,34 +1,28 @@
 esphome:
   includes:
     - "lwip/ip_addr.h"
-  on_boot:
-    priority: -10
-    then:
-      - lambda: |-
-          // Logika sprawdzania połączenia po 60s
-          id(boot_timer).setup(); 
+  # Wymuszamy obsługę obu interfejsów dla ESP32
+  platformio_options:
+    build_flags:
+      - -DCONFIG_ESP32_WIFI_ENABLED
+      - -DUSE_ETHERNET
 
-# Zarządca czasu i stanów
+# Logika przełączania po 60s braku sieci
 interval:
   - interval: 60s
     then:
       - lambda: |-
           if (!network::is_connected()) {
             int current = id(network_mode_global);
-            // Przejście: 1 (LAN DHCP) -> 2 (WiFi) -> 3 (AP)
-            // Tryb 4 (Manual) jest pomijany w automacie - wywoływany tylko ręcznie
-            int next = current;
-            if (current == 1) next = 2;
-            else if (current == 2) next = 3;
-            else if (current == 3) next = 1; // Zapętlenie dla bezpieczeństwa
-            
-            if (current != 4) { // Jeśli nie jesteśmy w trybie ręcznym
+            if (current != 4) { // Manual jest święty, nie zmieniamy go automatem
+              int next = current + 1;
+              if (next > 3) next = 1; 
               id(network_mode_global) = next;
               id(network_mode_global).execute_restore();
               App.reboot();
             }
           }
-
+          
 # 1. LAN DHCP & 4. LAN STATIC
 ethernet:
   type: LAN8720
@@ -37,6 +31,7 @@ ethernet:
   clk_mode: ${eth_clk_mode}
   phy_addr: ${eth_phy_addr}
   power_pin: ${eth_power_pin}
+  # Tryb 1: DHCP, Tryb 4: Statyk
   manual_ip: !lambda |-
     if (id(network_mode_global) == 4) {
       auto ip = network::IPAddress::from_string(id(lan_ip).state);
@@ -68,4 +63,3 @@ web_server:
 
 api:
   reboot_timeout: 0s
-  
