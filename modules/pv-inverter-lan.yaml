@@ -88,6 +88,9 @@ substitutions:
 esphome:
   name: ${name}
   name_add_mac_suffix: true # To doda sufiks automatycznie (np. modbus-gateway-a1b2c3)
+  platformio_options:
+    build_flags:
+      - -DCONFIG_ESP32_WIFI_ENABLED
   friendly_name: "Modbus Gateway"
   project:
     name: "michalwerszner.deye_gateway"
