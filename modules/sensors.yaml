@@ -1,24 +1,35 @@
-# DHT22 / DHT11 / AM2302
-sensor:
-  - platform: dht
-    pin: ${dht_pin}
-    model: ${dht_model}
-    temperature:
-      name: "Temp"
-    humidity:
-      name: "Humidity"
-    update_interval: 10s
-
 # DS18B20 – wielokanałowo
 one_wire:
   - platform: gpio
     pin: ${ds18b20_pin}
 
-# Przykład dla 2 czujników DS18B20
+# DHT22 / DHT11 / AM2302
 sensor:
-  - platform: dallas
-    address: 0xAABBCCDDEEFF1122
-    name: "DS18B20 #1"
-  - platform: dallas
-    address: 0x1122334455667788
-    name: "DS18B20 #2"
+  # Temperatura otoczenia (np. w obudowie)
+  - platform: dht
+    pin: ${dht_pin}
+    model: ${dht_model}
+    temperature:
+      name: "Gateway Temperature"
+      id: gateway_temp
+    humidity:
+      name: "Gateway Humidity"
+      id: gateway_humidity
+    update_interval: 60s
+
+  # Czujnik temperatury na kablu (np. radiator inwertera)
+  - platform: dallas_hub
+    address: 0x... # Tutaj ESPHome samo znajdzie ID podczas logowania, jeśli masz jeden czujnik
+    name: "Inverter External Temp"
+    id: ext_temp
+    update_interval: 30s
+
+  # Monitorowanie sygnału WiFi (przydatne przy testach anteny)
+  - platform: wifi_signal
+    name: "Gateway WiFi Signal"
+    update_interval: 60s
+
+  # Status Uptime
+  - platform: uptime
+    name: "Gateway Uptime"
+    id: gateway_uptime
