@@ -1,4 +1,5 @@
-# KY-040 enkoder
+# Copyright 2026 MichalWerszner
+# KY-040 enkoder - Sterowanie i Interakcja
 sensor:
   - platform: rotary_encoder
     name: "Encoder"
@@ -6,42 +7,87 @@ sensor:
     pin_b: ${encoder_dt}
     id: encoder_rot
     resolution: 4
-    on_rotate:
-      - lambda: |-
-          // logika zmiany wartości IP, maski, gateway, DHCP/static
-          // zapis do globals
-          // Przykład: zmiana adresu Modbus przez obrót
-          if (x > id(modbus_address).state) {
-            id(modbus_address).state++;
-          } else {
-            id(modbus_address).state--;
-          }
-    on_clockwise:
-      - lambda: |-
-          int m = id(network_mode_global);
-          if (m < 4) id(network_mode_global) = m + 1;
-    on_anticlockwise:
-      - lambda: |-
-          int m = id(network_mode_global);
-          if (m > 1) id(network_mode_global) = m - 1;
-switch:
-  - platform: gpio
-    pin: 
-      number: ${encoder_sw}
-      inverted: true
-      mode: INPUT_PULLUP
-    name: "Encoder Button"
-    id: encoder_sw_btn
-    on_press:
+    on_value:
       then:
-        - logger.log: "Przycisk naciśnięty - zatwierdź zmiany"
-        - lambda: 'id(modbus_address).execute_restore();' # Przykładowy zapis do flash
+        - lambda: |-
+            id(is_editing) = true; // Zatrzymaj autoscroll OLED
+          
+            // Logika zmiany wartości IP, maski, gateway, DHCP/static - zależna od aktualnej strony OLED
+            // zapis do globals
+            // Przykład: zmiana adresu Modbus przez obrót
+            if (id(oled_page) == 0) {
+              // Strona NET: Zmiana trybu 1-4
+              if (x > id(encoder_rot).old_value) {
+                if (id(network_mode_global) < 4) id(network_mode_global)++;
+              } else {
+                if (id(network_mode_global) > 1) id(network_mode_global)--;
+              }
+            } 
+            else if (id(oled_page) == 1) {
+              // Strona MODBUS: Zmiana adresu
+              if (x > id(encoder_rot).old_value) id(modbus_address)++;
+              else id(modbus_address)--;
+            }
+            else {
+              // Na innych stronach obrót po prostu przełącza strony ręcznie
+              if (x > id(encoder_rot).old_value) id(oled_page)++;
+              else id(oled_page)--;
+              if (id(oled_page) > 4) id(oled_page) = 0;
+            }
+
+//    on_clockwise:
+//      - lambda: |-
+//          int m = id(network_mode_global);
+//          if (m < 4) id(network_mode_global) = m + 1;
+//    on_anticlockwise:
+//      - lambda: |-
+//          int m = id(network_mode_global);
+//          if (m > 1) id(network_mode_global) = m - 1;
+//switch:
+//  - platform: gpio
+//    pin: 
+//      number: ${encoder_sw}
+//      inverted: true
+//      mode: INPUT_PULLUP
+//    name: "Encoder Button"
+//    id: encoder_sw_btn
+//    on_press:
+//      then:
+//        - logger.log: "Przycisk naciśnięty - zatwierdź zmiany"
+//        - lambda: 'id(modbus_address).execute_restore();' # Przykładowy zapis do flash
 
 # Przycisk enkodera jako zatwierdzenie i Reboot
 binary_sensor:
   - platform: gpio
-    pin: ${encoder_sw}
+    pin:
+      number: ${encoder_sw}
+      inverted: true
+      mode: INPUT_PULLUP
+    id: encoder_sw_btn
     on_press:
-      - lambda: |-
-          id(network_mode_global).execute_restore();
-          App.reboot();
+      then:
+        - lambda: |-
+            if (id(is_editing)) {
+              // Zatwierdzenie zmian
+              id(network_mode_global).execute_restore();
+              id(modbus_address).execute_restore();
+              id(is_editing) = false; // Powrót do autoscrolla
+              
+              if (id(oled_page) == 0) App.reboot(); // Reboot tylko przy zmianie sieci
+              
+              // Jeśli jesteś na stronie RELAYS (4), kliknięcie przełącza stan przekaźnika
+              if (id(oled_page) == 4) {
+                 id(relay1).toggle(); // Przykład dla R1
+              }
+            } else {
+              id(is_editing) = true; // Wejdź w tryb edycji
+            }
+    on_double_click: 1s
+    then:
+      - lambda: id(is_editing) = false; // Wyjście bez zapisu
+
+# Timer powrotu do autoscrolla po 10s bezczynności
+interval:
+  - interval: 10s
+    then:
+      - lambda: 'id(is_editing) = false;'
