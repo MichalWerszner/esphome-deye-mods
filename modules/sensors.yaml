@@ -5,20 +5,21 @@ one_wire:
     id: my_1wire_bus
 
 # DHT22 / DHT11 / AM2302
-sensor:
-  # Temperatura otoczenia (np. w obudowie)
-  - platform: dht
-    pin: ${dht_pin}
-    model: ${dht_model}
-    temperature:
-      name: "Gateway Temperature"
-      id: gateway_temp
-    humidity:
-      name: "Gateway Humidity"
-      id: gateway_humidity
-    update_interval: 60s
+# sensor:
+#  # Temperatura otoczenia (np. w obudowie)
+#  - platform: dht
+#    pin: ${dht_pin}
+#    model: ${dht_model}
+#    temperature:
+#      name: "Gateway Temperature"
+#      id: gateway_temp
+#    humidity:
+#      name: "Gateway Humidity"
+#      id: gateway_humidity
+#    update_interval: 60s
 
-  # Czujnik temperatury na kablu (np. radiator inwertera)
+# Czujnik temperatury na kablu (np. radiator inwertera) DS18B20
+sensor:
   - platform: dallas_temp
     address: 0x... # Tutaj ESPHome samo znajdzie ID podczas logowania, jeśli masz jeden czujnik
     name: "Inverter External Temp"
@@ -34,6 +35,7 @@ sensor:
   - platform: uptime
     name: "Gateway Uptime"
     id: gateway_uptime
+
 
 
 
