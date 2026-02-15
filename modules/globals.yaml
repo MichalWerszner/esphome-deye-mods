@@ -1,0 +1,42 @@
+globals:
+  # --- NETWORK LAN ---
+  - id: lan_ip
+    type: std::string
+    restore_value: true
+    initial_value: ""
+  - id: lan_mask
+    type: int
+    restore_value: true
+    initial_value: 24
+  - id: lan_gateway
+    type: std::string
+    restore_value: true
+    initial_value: ""
+  - id: lan_dhcp
+    type: bool
+    restore_value: true
+    initial_value: true
+
+  # --- WIFI ---
+  - id: wifi_ssid_global
+    type: std::string
+    restore_value: true
+    initial_value: !lambda 'return id(wifi_ssid).c_str();'
+  - id: wifi_password_global
+    type: std::string
+    restore_value: true
+    initial_value: !lambda 'return id(wifi_password).c_str();'
+  - id: wifi_dhcp
+    type: bool
+    restore_value: true
+    initial_value: true
+
+  # --- MODBUS ---
+  - id: modbus_address
+    type: int
+    restore_value: true
+    initial_value: !lambda 'return (int) strtol(id(modbus_inverter_address).c_str(), nullptr, 0);'
+  - id: modbus_baud
+    type: int
+    restore_value: true
+    initial_value: 115200

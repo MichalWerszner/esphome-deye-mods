@@ -1,0 +1,13 @@
+ethernet:
+  type: LAN8720
+  mdc_pin: ${eth_mdc_pin}
+  mdio_pin: ${eth_mdio_pin}
+  clk_pin: ${eth_clk_pin}
+  power_pin: ${eth_power_pin}
+  phy_addr: ${eth_phy_addr}
+
+  manual_ip:
+    static_ip: !lambda 'return id(lan_ip).state.c_str();'
+    gateway: !lambda 'return id(lan_gateway).state.c_str();'
+    subnet: !lambda 'return id(lan_mask).state;'
+  use_dhcp: !lambda 'return id(lan_dhcp).state;'

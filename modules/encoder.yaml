@@ -1,0 +1,21 @@
+# KY-040 enkoder
+sensor:
+  - platform: rotary_encoder
+    name: "Encoder"
+    pin_a: ${encoder_clk}
+    pin_b: ${encoder_dt}
+    id: encoder_rot
+    resolution: 4
+    on_rotate:
+      - lambda: |-
+          // logika zmiany wartości IP, maski, gateway, DHCP/static
+          // zapis do globals
+switch:
+  - platform: gpio
+    pin: ${encoder_sw}
+    name: "Encoder Button"
+    id: encoder_sw_btn
+    on_press:
+      then:
+        - lambda: |-
+            // potwierdzenie zmian, zapis do flash (globals)

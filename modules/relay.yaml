@@ -1,0 +1,61 @@
+switch:
+  - platform: gpio
+    id: relay1
+    name: "Relay 1"
+    pin: ${relay1_pin}
+    internal: false
+
+  - platform: gpio
+    id: relay2
+    name: "Relay 2"
+    pin: ${relay2_pin}
+
+  - platform: gpio
+    id: relay3
+    name: "Relay 3"
+    pin: ${relay3_pin}
+
+  - platform: gpio
+    id: relay4
+    name: "Relay 4"
+    pin: ${relay4_pin}
+
+  - platform: gpio
+    id: relay5
+    name: "Relay 5"
+    pin: ${relay5_pin}
+
+  - platform: gpio
+    id: relay6
+    name: "Relay 6"
+    pin: ${relay6_pin}
+
+  - platform: gpio
+    id: relay7
+    name: "Relay 7"
+    pin: ${relay7_pin}
+
+  - platform: gpio
+    id: relay8
+    name: "Relay 8"
+    pin: ${relay8_pin}
+
+  - platform: gpio
+    id: relay9
+    name: "Relay 9"
+    pin: ${relay9_pin}
+
+  - platform: gpio
+    id: relay10
+    name: "Relay 10"
+    pin: ${relay10_pin}
+
+  - platform: gpio
+    id: relay11
+    name: "Relay 11"
+    pin: ${relay11_pin}
+
+  - platform: gpio
+    id: relay12
+    name: "Relay 12"
+    pin: ${relay12_pin}
