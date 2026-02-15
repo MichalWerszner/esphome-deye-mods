@@ -1,113 +1,39 @@
-# Copyright 2026 MichalWerszner
-# Moduł zarządzania siecią: LAN, WiFi, AP, Manual
+# modules/ethernet.yaml
+# Logika zarządzania siecią i bezpieczeństwem WiFi
 
-esphome:
-  # Wymuszamy obsługę obu interfejsów dla ESP32
-  platformio_options:
-    build_flags:
-      - -DCONFIG_ESP32_WIFI_ENABLED
-      - -DUSE_ETHERNET
-
-# Logika przełączania po 60s braku połączenia do sieci
 interval:
-  # 1. LAN DHCP -> 2. WiFi DHCP -> 3. WiFi AP
-  - interval: 60s
+  - interval: 10s
     then:
       - lambda: |-
-          if (!network::is_connected()) {
-            int current = id(network_mode_global);
-            if (current != 4) { // Manual jest święty, nie zmieniamy go automatem
-              int next = current + 1;
-              if (next > 3) next = 1; 
-              id(network_mode_global) = next;
-              id(network_mode_global).execute_restore();
-              App.reboot();
-            }
-          }
-          
-  # 2. Strażnik Bezpieczeństwa - Logika przełączania i zabijania WiFi
-  - interval: 10s # Sprawdzaj częściej na starcie, by szybko ubić WiFi
-    then:
-      - lambda: |-
+          // 1. Strażnik WiFi - wyłącza radio, gdy jesteśmy w trybie LAN
           int mode = id(network_mode_global);
-          bool is_lan = (mode == 1 || mode == 4);
+          bool is_lan = (mode == 1 || mode == 4); // 1-DHCP, 4-Static
           
           if (is_lan) {
-            // Jeśli tryb to LAN, a WiFi wciąż żyje - ZABIJ JE
             if (id(wifi_component).is_enabled()) {
-              ESP_LOGW("security", "LAN Mode active. Hard-disabling WiFi radio for security.");
+              ESP_LOGW("security", "Tryb LAN aktywny. Wyłączam WiFi dla bezpieczeństwa.");
               id(wifi_component).set_enabled(false);
             }
           } else {
-            // Jeśli tryb to WiFi/AP, a radio jest wyłączone - WŁĄCZ JE
             if (!id(wifi_component).is_enabled()) {
-              ESP_LOGW("network", "Wireless Mode active. Enabling WiFi radio.");
+              ESP_LOGW("network", "Tryb WiFi/AP aktywny. Uruchamiam radio.");
               id(wifi_component).set_enabled(true);
             }
           }
 
-          // Logika restartu przy braku połączenia
-          static uint32_t connection_lost_at = 0;
+  - interval: 60s
+    then:
+      - lambda: |-
+          // 2. Logika awaryjna - jeśli brak połączenia przez 60s, zmień tryb i restart
           if (!network::is_connected()) {
-            if (connection_lost_at == 0) connection_lost_at = millis();
-            if (millis() - connection_lost_at > 60000) { // 60 sekund timeoutu
-              ESP_LOGE("network", "Connection lost for 60s. Switching mode and rebooting...");
-              int next = mode + 1;
-              if (next > 3) next = 1;
+            int current = id(network_mode_global);
+            // Nie przełączaj automatycznie, jeśli jesteś w trybie Static (4)
+            if (current != 4) {
+              int next = current + 1;
+              if (next > 3) next = 1; 
               id(network_mode_global) = next;
               id(network_mode_global).execute_restore();
+              ESP_LOGE("network", "Brak połączenia. Zmieniam tryb na %d i restartuję...", next);
               App.reboot();
             }
-          } else {
-            connection_lost_at = 0;
           }
-          
-# 1. LAN DHCP & 4. LAN STATIC
-ethernet:
-#  type: LAN8720
-#  mdc_pin: ${eth_mdc_pin}
-#  mdio_pin: ${eth_mdio_pin}
-#  clk_mode: ${eth_clk_pin}
-#  phy_addr: ${eth_phy_addr}
-#  power_pin: ${eth_power_pin}
-  # Obsługa trybu 1 (DHCP) i 4 (Manual Static)
-  manual_ip: !lambda |-
-    if (id(network_mode_global) == 4) {
-      auto ip = network::IPAddress::from_string(id(lan_ip).state);
-      auto gw = network::IPAddress::from_string(id(lan_gateway).state);
-      auto sn = network::IPAddress::from_string(id(lan_mask).state);
-      if (ip.has_value()) {
-        network::ManualIP manual;
-        manual.static_ip = *ip;
-        manual.gateway = *gw;
-        manual.subnet = *sn;
-        return manual;
-      }
-    }
-    return {}; // Dla trybu 1 (DHCP) i innych zwraca puste (czyli DHCP)
-
-# 2. WiFi DHCP & 3. Fallback AP
-#wifi:
-#  # WiFi jest aktywne tylko w trybach 2 i 3
-#  networks:
-#    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
-#      password: !lambda 'return id(wifi_password_global).state.c_str();'
-#  ap:
-#    ssid: "${name}-fallback"
-#    password: ${fallback_password}
-
-
-
-# Punkt 3: Strona do zmiany konfiguracji (dostępna w każdym trybie, jeśli jest IP)
-web_server:
-  port: 80
-
-api:
-  reboot_timeout: 0s
-
-
-
-
-
-
-
