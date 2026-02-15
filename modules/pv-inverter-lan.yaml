@@ -103,17 +103,6 @@ esphome:
     name: "michalwerszner.deye_gateway"
     version: "1.2.1"
 
-ethernet:
-  # Konfiguracja jest w Twoim module ethernet.yaml na GitHubie,
-  # ale ESPHome potrzebuje "pustej" deklaracji tutaj lub w module.
-
-# Używamy !extend, aby dopisać id do sekcji wifi stworzonej przez Lewa-Reka
-wifi:
-  id: wifi_component
-  # Nie wpisujemy tu ssid i password - one już tam są dzięki substitutions
-  ap:
-    id: wifi_ap_component
-
 # Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
 esp32:
   board: esp32dev
@@ -125,23 +114,46 @@ esp32:
       CONFIG_ESP32_WIFI_ENABLED: "y"
       CONFIG_ETH_ENABLED: "y"
 
+ethernet:
+  # Konfiguracja jest w Twoim module ethernet.yaml na GitHubie,
+  # ale ESPHome potrzebuje "pustej" deklaracji tutaj lub w module.
+  # --- SIECI (Pełna deklaracja tutaj ucisza walidator) ---
+  type: LAN8720
+  mdc_pin: ${eth_mdc_pin}
+  mdio_pin: ${eth_mdio_pin}
+  clk_mode: ${eth_clk_pin}
+  phy_addr: ${eth_phy_addr}
+  power_pin: ${eth_power_pin}
+
+# Używamy !extend, aby dopisać id do sekcji wifi stworzonej przez Lewa-Reka
+wifi:
+  id: wifi_component
+  # Nie wpisujemy tu ssid i password - one już tam są dzięki substitutions
+  ap:
+    id: wifi_ap_component
+
+
 packages:
+  # Twój moduł globalny musi iść jako jeden z pierwszych
+  globals:
+    url: https://github.com/MichalWerszner/esphome-deye-mods
+    files: [modules/globals.yaml]
+
   # BAZA OD LEWA-REKA
   pv_inverter:
     url: https://github.com/Lewa-Reka/esphome-deye-inverter
-    refresh: 12h
     files:
       ### Use the appropriate file for your inverter, uncomment the one you want to use ###
       # pv_inverter/deye_hybrid_1p_lv.yaml # SG0XLP1 Low Voltage (1P)
       pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P)
       # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
+    refresh: 12h
 
   # MODUŁY Z GITHUBA 
   my_extension:
     url: https://github.com/MichalWerszner/esphome-deye-mods
     ref: main
     files:
-      - modules/globals.yaml
       - modules/ethernet.yaml
       - modules/oled.yaml
       - modules/encoder.yaml
