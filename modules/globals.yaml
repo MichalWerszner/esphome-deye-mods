@@ -8,7 +8,14 @@ globals:
     type: std::string
     restore_value: yes
     initial_value: '"${wifi_password}"'
-
+  
+  # --- Network Mode Control ---
+  # 0: Ethernet DHCP, 1: WiFi DHCP, 2: Static IP (Manual)
+  - id: network_mode_global
+    type: int
+    restore_value: yes
+    initial_value: '0'
+  
   # Sieć IP
   - id: lan_dhcp
     type: bool
@@ -46,3 +53,4 @@ globals:
     type: int
     restore_value: yes
     initial_value: '0'  # Dodaj typ i wartość początkową
+
