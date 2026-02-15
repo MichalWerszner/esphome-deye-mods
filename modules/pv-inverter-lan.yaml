@@ -41,7 +41,7 @@ substitutions:
   enable_oled: "true"
   enable_encoder: "true"
   enable_sensors: "true"
-  enable_relays: "false"
+  enable_relays: "true"
   
 
   # ===== ETHERNET (Konfiguracja sprzętowa WT32-ETH01) =====
@@ -61,26 +61,27 @@ substitutions:
   # Wykorzystujemy piny CFG i 485_EN z dokumentacji
   encoder_clk: GPIO32 # Pin 2 na listwie
   encoder_dt: GPIO33  # Pin 3 na listwie
-  encoder_sw: GPIO35  # Pin 17 na listwie (Input only - idealny dla przycisku)
+  encoder_sw: GPIO35  # Pin 17 na listwie (Input only - idealny dla przycisku) musisz dołożyć zewnętrzny rezystor (np. 10kΩ) między pin GPIO35 a 3.3V
 
   # ===== DHT / DS =====
-  dht_pin: GPIO4 # 10k pullup DHT (jeśli goły sensor)  # Pin 18 na listwie (obsługuje I/O)
-  dht_model: DHT22
-  ds18b20_pin: GPIO2 # ds18b20_pin: GPIO26 ESP+LAN ; 4.7k pullup OneWire między DATA a 3.3V, Pin 19 na listwie (Uwaga: musi być HIGH przy starcie!)
-
+  # dht_pin: GPIO4 # 10k pullup DHT (jeśli goły sensor)  # Pin 18 na listwie (obsługuje I/O)
+  # dht_model: DHT22
+  # ds18b20_pin: GPIO2 # ds18b20_pin: GPIO26 ESP+LAN ; 4.7k pullup OneWire między DATA a 3.3V, Pin 19 na listwie (Uwaga: musi być HIGH przy starcie!)
+  ds18b20_pin: GPIO4
+  
   # ===== RELAYS (max 12, -1 = brak) =====
-  relay1_pin: GPIO12 # Pin 16 na listwie
-  relay2_pin: GPIO13 # Pin 20 na listwie (ostatni wolny GPO)
-  relay3_pin: "-1"
-  relay4_pin: "-1"
-  relay5_pin: "-1"
-  relay6_pin: "-1"
-  relay7_pin: "-1"
-  relay8_pin: "-1"
-  relay9_pin: "-1"
-  relay10_pin: "-1"
-  relay11_pin: "-1"
-  relay12_pin: "-1"
+  #relay1_pin: GPIO12 # Pin 16 na listwie
+  relay_pin: GPIO13 # Pin 20 na listwie (ostatni wolny GPO) 
+  #relay3_pin: "-1"
+  #relay4_pin: "-1"
+  #relay5_pin: "-1"
+  #relay6_pin: "-1"
+  #relay7_pin: "-1"
+  #relay8_pin: "-1"
+  #relay9_pin: "-1"
+  #relay10_pin: "-1"
+  #relay11_pin: "-1"
+  #relay12_pin: "-1"
 
   # ===== UART / Modbus ===== terminator 120Ω jeśli długi kabel
   # MODYFIKACJA: GPIO17 jest zajęte przez zegar 50MHz! Używamy GPIO5.
@@ -101,13 +102,27 @@ esphome:
   project:
     name: "michalwerszner.deye_gateway"
     version: "1.1.1"
-  includes: !override []
 
+wifi:
+  id: wifi_component # To ID pozwoli nam wyłączać radio w lambdzie
+  networks:
+    - ssid: ${wifi_ssid}
+      password: ${wifi_password}
+  ap:
+    id: wifi_ap_component
+    ssid: "${name}-fallback"
+    password: ${fallback_password}
+    
 # Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
 esp32:
   board: esp32dev
   framework:
-    type: arduino
+    type: esp-idf
+    version: recommended # Używamy sprawdzonej wersji
+    # Możemy dodać optymalizację rozmiaru, jeśli zabraknie miejsca
+    sdkconfig_options:
+      CONFIG_ESP32_WIFI_ENABLED: "y"
+      CONFIG_ETH_ENABLED: "y"
 
 packages:
   # BAZA OD LEWA-REKA
@@ -168,16 +183,6 @@ ota:
   #  gateway: !lambda 'return id(lan_gateway).state.c_str();'
   #  subnet: !lambda 'return id(lan_mask).state;'
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
-wifi: !remove
-
-wifi:
-  networks:
-    - ssid: ${wifi_ssid}
-      password: ${wifi_password}
-  ap:
-    ssid: "${name}-fallback"
-    password: ${fallback_password}
-
 
 uart:
   # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
