@@ -1,16 +1,21 @@
 ethernet:
-  type: LAN8720
-  mdc_pin: ${eth_mdc_pin}
-  mdio_pin: ${eth_mdio_pin}
-  clk_pin: ${eth_clk_pin}
-  power_pin: ${eth_power_pin}
-  phy_addr: ${eth_phy_addr}
-  domain: .local
+# To 'id' pozwoli nam odwoływać się do ethernetu
+  id: eth_interface
+  # Logika wyboru IP - jeśli DHCP wyłączone w globals, ustaw statyka
   
-  manual_ip:
-    static_ip: !lambda 'return id(lan_ip).state.c_str();'
-    gateway: !lambda 'return id(lan_gateway).state.c_str();'
-    subnet: !lambda 'return id(lan_mask).state.c_str();'
-  use_dhcp: !lambda 'return id(lan_dhcp).state;'
+  manual_ip:!lambda |-
+    if (id(lan_dhcp).state) {
+      return {}; 
+    } else {
+      network::ManualIP manual;
+      manual.static_ip = network::IPAddress::from_string(id(lan_ip).state);
+      manual.gateway = network::IPAddress::from_string(id(lan_gateway).state);
+      manual.subnet = network::IPAddress::from_string(id(lan_mask).state);
+      return manual;
+    }
 
+# Dodajemy priorytety, aby ESPHome wiedziało jak zarządzać ruchem
+# Jeśli kabel jest wpięty, Ethernet ma pierwszeństwo (0), WiFi ma (1)
+api:
+  reboot_timeout: 15min
 
