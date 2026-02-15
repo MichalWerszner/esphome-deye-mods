@@ -51,7 +51,7 @@ binary_sensor:
     pin:
       number: ${encoder_sw}
       inverted: true
-      mode: INPUT_PULLUP
+      mode: INPUT
     id: encoder_sw_btn
     on_press:
       then:
@@ -93,6 +93,7 @@ interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
+
 
 
 
