@@ -18,9 +18,10 @@ font:
     id: font
     size: 10
 
-#i2c:
-#  sda: ${oled_sda}
-#  scl: ${oled_scl}
+i2c:
+  sda: ${oled_sda}
+  scl: ${oled_scl}
+  scan: true
 
 display:
   - platform: ssd1306_i2c
@@ -97,3 +98,4 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
