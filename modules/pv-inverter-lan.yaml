@@ -101,18 +101,19 @@ esphome:
   friendly_name: "Modbus Gateway"
   project:
     name: "michalwerszner.deye_gateway"
-    version: "1.1.1"
+    version: "1.2.1"
 
+ethernet:
+  # Konfiguracja jest w Twoim module ethernet.yaml na GitHubie,
+  # ale ESPHome potrzebuje "pustej" deklaracji tutaj lub w module.
+
+# Używamy !extend, aby dopisać id do sekcji wifi stworzonej przez Lewa-Reka
 wifi:
-  id: wifi_component # To ID pozwoli nam wyłączać radio w lambdzie
-  networks:
-    - ssid: ${wifi_ssid}
-      password: ${wifi_password}
+  id: wifi_component
+  # Nie wpisujemy tu ssid i password - one już tam są dzięki substitutions
   ap:
     id: wifi_ap_component
-    ssid: "${name}-fallback"
-    password: ${fallback_password}
-    
+
 # Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
 esp32:
   board: esp32dev
@@ -146,7 +147,7 @@ packages:
       - modules/encoder.yaml
       - modules/sensors.yaml
       - modules/relay.yaml
-    refresh: 1min # Na czas testów dajemy 5 minut
+    refresh: 0s # Na czas testów dajemy 5 minut
 
 
 logger:
@@ -186,11 +187,11 @@ ota:
 
 uart:
   # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
-  id: uart_modbus
+  id: modbus_uart
   tx_pin: ${tx_pin}
   rx_pin: ${rx_pin}
-  #baud_rate: !lambda 'return id(modbus_baud).state;'
-  baud_rate: 9600 # Na start na sztywno, by uniknąć błędów inicjalizacji
+  #baud_rate: !lambda 'return id(modbus_baud).state;' # umożliwia zmiane w locie bez rekompilacji kodu za pomocą oled i enkodera
+  baud_rate: ${baud_rate} # Na start na sztywno, by uniknąć błędów inicjalizacji
 
 #modbus:
 #  flow_control_pin: GPIO4 # Uncomment and set appropriate pin if your TTL converter requires it
