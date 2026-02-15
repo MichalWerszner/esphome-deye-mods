@@ -115,7 +115,6 @@ packages:
     ref: main
     files:
       - modules/globals.yaml
-      - modules/network_selector.yaml
       - modules/ethernet.yaml
       - modules/oled.yaml
       - modules/encoder.yaml
