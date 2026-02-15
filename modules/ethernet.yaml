@@ -2,8 +2,6 @@
 # Moduł zarządzania siecią: LAN, WiFi, AP, Manual
 
 esphome:
-  includes:
-    - "lwip/ip_addr.h"
   # Wymuszamy obsługę obu interfejsów dla ESP32
   platformio_options:
     build_flags:
@@ -67,6 +65,7 @@ web_server:
 
 api:
   reboot_timeout: 0s
+
 
 
 
