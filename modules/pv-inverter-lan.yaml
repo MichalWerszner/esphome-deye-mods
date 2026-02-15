@@ -129,6 +129,7 @@ logger:
 
 api:
   password: ${api_key}
+  reboot_timeout: 15min
 
 ota:
   - platform: esphome
@@ -137,10 +138,10 @@ ota:
 # ===== WiFi / UART – upstream LewaRęka, z lambda do globals =====
 wifi:
   # Zamiast bezpośredniego ssid/password, używamy listy networks z priorytetem
-  networks:
-    - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
-      password: !lambda 'return id(wifi_password_global).state.c_str();'
-      priority: 1 # Niższy priorytet niż Ethernet 
+  #networks:
+  #  - ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
+  #    password: !lambda 'return id(wifi_password_global).state.c_str();'
+  #    priority: 1 # Niższy priorytet niż Ethernet 
   #ssid: !lambda 'return id(wifi_ssid_global).state.c_str();'
   #password: !lambda 'return id(wifi_password_global).state.c_str();'
   ap:
