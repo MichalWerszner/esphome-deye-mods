@@ -16,6 +16,14 @@ sensor:
           } else {
             id(modbus_address).state--;
           }
+    on_clockwise:
+      - lambda: |-
+          int m = id(network_mode_global);
+          if (m < 4) id(network_mode_global) = m + 1;
+    on_anticlockwise:
+      - lambda: |-
+          int m = id(network_mode_global);
+          if (m > 1) id(network_mode_global) = m - 1;
 switch:
   - platform: gpio
     pin: 
@@ -28,3 +36,12 @@ switch:
       then:
         - logger.log: "Przycisk naciśnięty - zatwierdź zmiany"
         - lambda: 'id(modbus_address).execute_restore();' # Przykładowy zapis do flash
+
+# Przycisk enkodera jako zatwierdzenie i Reboot
+binary_sensor:
+  - platform: gpio
+    pin: ${encoder_sw}
+    on_press:
+      - lambda: |-
+          id(network_mode_global).execute_restore();
+          App.reboot();
