@@ -19,7 +19,7 @@ sensor:
     update_interval: 60s
 
   # Czujnik temperatury na kablu (np. radiator inwertera)
-  - platform: dallas
+  - platform: dallas_temp
     address: 0x... # Tutaj ESPHome samo znajdzie ID podczas logowania, jeśli masz jeden czujnik
     name: "Inverter External Temp"
     id: ext_temp
@@ -34,5 +34,6 @@ sensor:
   - platform: uptime
     name: "Gateway Uptime"
     id: gateway_uptime
+
 
 
