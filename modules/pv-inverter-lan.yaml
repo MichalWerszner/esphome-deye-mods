@@ -47,15 +47,6 @@ substitutions:
   eth_clk_pin: GPIO0_IN  # Kluczowe dla stabilności LAN
   eth_power_pin: GPIO16   # Pin 12 na listwie (zasilanie PHY)
   eth_phy_addr: "1"
-# Konfiguracja Ethernet dla WT32-ETH01
-#ethernet:
-#  type: LAN8720
-#  mdc_pin: GPIO23
-#  mdio_pin: GPIO18
-#  clk_mode: GPIO0_IN
-#  phy_addr: 1
-#  power_pin: GPIO16
-
 
   # ===== OLED SSD1306 ===== adres I2C = 0x3C zwykle; 3.3V nie 5V
   # Przeniesione na piny, które obsługują wyjście
