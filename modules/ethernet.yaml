@@ -59,12 +59,51 @@ ethernet:
 #    ssid: "${name}-fallback"
 #    password: ${fallback_password}
 
+# 2. Strażnik Bezpieczeństwa - Logika przełączania i zabijania WiFi
+interval:
+  - interval: 10s # Sprawdzaj częściej na starcie, by szybko ubić WiFi
+    then:
+      - lambda: |-
+          int mode = id(network_mode_global);
+          bool is_lan = (mode == 1 || mode == 4);
+          
+          if (is_lan) {
+            // Jeśli tryb to LAN, a WiFi wciąż żyje - ZABIJ JE
+            if (id(wifi_component).is_enabled()) {
+              ESP_LOGW("security", "LAN Mode active. Hard-disabling WiFi radio for security.");
+              id(wifi_component).set_enabled(false);
+            }
+          } else {
+            // Jeśli tryb to WiFi/AP, a radio jest wyłączone - WŁĄCZ JE
+            if (!id(wifi_component).is_enabled()) {
+              ESP_LOGW("network", "Wireless Mode active. Enabling WiFi radio.");
+              id(wifi_component).set_enabled(true);
+            }
+          }
+
+          // Logika restartu przy braku połączenia
+          static uint32_t connection_lost_at = 0;
+          if (!network::is_connected()) {
+            if (connection_lost_at == 0) connection_lost_at = millis();
+            if (millis() - connection_lost_at > 60000) { // 60 sekund timeoutu
+              ESP_LOGE("network", "Connection lost for 60s. Switching mode and rebooting...");
+              int next = mode + 1;
+              if (next > 3) next = 1;
+              id(network_mode_global) = next;
+              id(network_mode_global).execute_restore();
+              App.reboot();
+            }
+          } else {
+            connection_lost_at = 0;
+          }
+
 # Punkt 3: Strona do zmiany konfiguracji (dostępna w każdym trybie, jeśli jest IP)
 web_server:
   port: 80
 
 api:
   reboot_timeout: 0s
+
 
 
 
