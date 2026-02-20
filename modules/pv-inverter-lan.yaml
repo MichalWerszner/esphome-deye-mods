@@ -156,7 +156,7 @@ packages:
 
   # BAZA OD LEWA-REKA
   pv_inverter:
-    url: https://github.com/Lewa-Reka/esphome-deye-inverter
+    url: https://github.com/MichalWerszner/esphome-deye-inverter
     files:
       ### Use the appropriate file for your inverter, uncomment the one you want to use ###
       # pv_inverter/deye_hybrid_1p_lv.yaml # SG0XLP1 Low Voltage (1P)
