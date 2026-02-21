@@ -1,7 +1,7 @@
 switch:
   - platform: gpio
     name: "Gateway Relay"
-    id: relay_1
+    id: relay1
     pin:
       number: ${relay_pin}
     restore_mode: ALWAYS_OFF
@@ -11,3 +11,4 @@ switch:
 #    id: relay2
 #    name: "Relay 2"
 #    pin: ${relay2_pin}
+
