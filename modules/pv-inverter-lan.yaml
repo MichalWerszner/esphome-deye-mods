@@ -176,8 +176,6 @@ ota:
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
 
 uart:
-#  # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
-#  id: modbus_uart
   tx_pin: ${tx_pin}
   rx_pin: ${rx_pin}
 #  #baud_rate: !lambda 'return id(modbus_baud).state;' # umożliwia zmiane w locie bez rekompilacji kodu za pomocą oled i enkodera
