@@ -60,8 +60,8 @@ binary_sensor:
             if (id(is_editing)) {
               // Jeśli byliśmy w trybie edycji, kliknięcie ZAPISUJE i WYCHODZI
               // Zatwierdzenie zmian
-              id(network_mode_global).execute_restore();
-              id(modbus_address).execute_restore();
+              // id(network_mode_global).execute_restore();
+              // id(modbus_address).execute_restore();
               // Powrót do autoscrolla
               id(is_editing) = false; 
 
@@ -93,6 +93,7 @@ interval:
   - interval: 10s
     then:
       - lambda: 'id(is_editing) = false;'
+
 
 
 
