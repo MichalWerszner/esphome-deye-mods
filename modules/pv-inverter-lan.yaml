@@ -106,7 +106,10 @@ ethernet:
   type: LAN8720
   mdc_pin: ${eth_mdc_pin}
   mdio_pin: ${eth_mdio_pin}
-  clk_mode: ${eth_clk_pin}
+  # clk_mode: ${eth_clk_pin}
+  clk:
+    mode: CLK_EXT_IN
+    pin: 0
   phy_addr: ${eth_phy_addr}
   power_pin: ${eth_power_pin}
   # Logika statycznego IP pobierana z Twoich globals
@@ -172,16 +175,21 @@ ota:
   #  subnet: !lambda 'return id(lan_mask).state;'
   #use_dhcp: !lambda 'return id(lan_dhcp).state;'
 
-uart:
-  # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
-  id: modbus_uart
-  tx_pin: ${tx_pin}
-  rx_pin: ${rx_pin}
-  #baud_rate: !lambda 'return id(modbus_baud).state;' # umożliwia zmiane w locie bez rekompilacji kodu za pomocą oled i enkodera
-  baud_rate: ${baud_rate} # Na start na sztywno, by uniknąć błędów inicjalizacji
+#uart:
+#  # Default TX and RX pins, if TTL converter is connected differently, set appropriate pins
+#  id: modbus_uart
+#  tx_pin: ${tx_pin}
+#  rx_pin: ${rx_pin}
+#  #baud_rate: !lambda 'return id(modbus_baud).state;' # umożliwia zmiane w locie bez rekompilacji kodu za pomocą oled i enkodera
+#  baud_rate: ${baud_rate} # Na start na sztywno, by uniknąć błędów inicjalizacji
 
 #modbus:
 #  flow_control_pin: GPIO4 # Uncomment and set appropriate pin if your TTL converter requires it
 #  id: modbus1
 #  uart_id: uart_modbus
 #  address: !lambda 'return id(modbus_address).state;'
+
+web_server:
+  port: 80
+  version: 3
+  include_internal: false
