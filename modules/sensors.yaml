@@ -27,14 +27,15 @@ sensor:
     update_interval: 30s
 
   # Monitorowanie sygnału WiFi (przydatne przy testach anteny)
-  - platform: wifi_signal
-    name: "Gateway WiFi Signal"
-    update_interval: 60s
+  #- platform: wifi_signal
+  #  name: "Gateway WiFi Signal"
+  #  update_interval: 60s
 
   # Status Uptime
   - platform: uptime
     name: "Gateway Uptime"
     id: gateway_uptime
+
 
 
 
