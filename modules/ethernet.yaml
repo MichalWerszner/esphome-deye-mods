@@ -2,38 +2,9 @@
 # Logika zarządzania siecią i bezpieczeństwem WiFi
 
 interval:
-  - interval: 10s
-    then:
-      - lambda: |-
-          // 1. Strażnik WiFi - wyłącza radio, gdy jesteśmy w trybie LAN
-          int mode = id(network_mode_global);
-          bool is_lan = (mode == 1 || mode == 4); // 1-DHCP, 4-Static
-          
-          if (is_lan) {
-            if (id(wifi_component).is_enabled()) {
-              ESP_LOGW("security", "Tryb LAN aktywny. Wyłączam WiFi dla bezpieczeństwa.");
-              id(wifi_component).set_enabled(false);
-            }
-          } else {
-            if (!id(wifi_component).is_enabled()) {
-              ESP_LOGW("network", "Tryb WiFi/AP aktywny. Uruchamiam radio.");
-              id(wifi_component).set_enabled(true);
-            }
-          }
-
   - interval: 60s
     then:
       - lambda: |-
-          // 2. Logika awaryjna - jeśli brak połączenia przez 60s, zmień tryb i restart
           if (!network::is_connected()) {
-            int current = id(network_mode_global);
-            // Nie przełączaj automatycznie, jeśli jesteś w trybie Static (4)
-            if (current != 4) {
-              int next = current + 1;
-              if (next > 3) next = 1; 
-              id(network_mode_global) = next;
-              id(network_mode_global).execute_restore();
-              ESP_LOGE("network", "Brak połączenia. Zmieniam tryb na %d i restartuję...", next);
-              App.reboot();
-            }
+            ESP_LOGE("network", "Brak połączenia LAN!");
           }
