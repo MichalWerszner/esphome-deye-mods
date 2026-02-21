@@ -2,7 +2,7 @@
 # Obsługa wyświetlacza OLED z cykliczną rotacją stron
 
 interval:
-  - interval: 3s
+  - interval: 5s
     then:
       - lambda: |-
           // Rotacja stron tylko, gdy nie jesteśmy w trybie edycji/interakcji
@@ -112,6 +112,7 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
 
