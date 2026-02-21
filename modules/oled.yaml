@@ -49,7 +49,7 @@ display:
           (id(network_mode_global) == 2) ? "2: WiFi DHCP" :
           (id(network_mode_global) == 3) ? "3: WiFi AP" : "4: MANUAL");
 
-        it.printf(0, 12, id(my_font), "IP: %s", network::get_ip_address().c_str());
+        it.printf(0, 12, id(my_font), "IP: %s", network::get_ip_addresses()[0].str().c_str());
         
         it.printf(0, 24, id(my_font), "Status: %s", 
           network::is_connected() ? "Connected" : "Searching...");
@@ -71,7 +71,7 @@ display:
         it.printf(0, 0, id(my_font), "Inverter Data");
         it.printf(0, 12, id(my_font), "Charge %dA", (int)id(maximum_battery_charge_current).state);
         it.printf(0, 24, id(my_font), "Sell %dW", (int)id(max_sell_power).state);
-        it.printf(0, 36, id(my_font), "Mode: %s", id(system_work_mode).state.c_str());
+        it.printf(0, 36, id(my_font), "Mode: %s", id(system_work_mode).current_option().c_str());
       }
 
       // ===== PAGE 3 – ENV (Czujniki) =====
@@ -93,10 +93,10 @@ display:
         int idx = 0;
         int shown = 0;
         auto draw_relay = [&](int n, auto &relay) {
-          if (relay.has_state()) {
+          if (relay->has_state()) {
             if (idx / 4 == id(relay_page) && shown < 4) {
               it.printf(0, shown * 12, id(my_font), "R%d: %s %s", n, 
-                relay.state ? "ON" : "OFF", 
+                relay->state ? "ON" : "OFF", 
                 (id(is_editing) && (shown == 0)) ? "<-" : ""); // Uproszczony wskaźnik edycji
               shown++;
             }
@@ -112,6 +112,7 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
 
