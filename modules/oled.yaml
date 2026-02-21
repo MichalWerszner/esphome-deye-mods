@@ -82,7 +82,7 @@ display:
         ##  it.printf(0, y, id(my_font), "DHT: %.1fC | %.0f%%", id(dht_temp).state, id(dht_hum).state); y += 12;
         ##}
         if (id(ds18b20_1).has_state()) {
-          it.printf(0, y, id(my_font), "DS1: %.1fC", id(ds18b20_1).state);
+          it.printf(0, y, id(my_font), "DS: %.1fC", id(ext_temp).state); y += 12;
         } else {
           it.print(0, 12, id(my_font), "No sensor");
         }
@@ -111,6 +111,7 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
 
