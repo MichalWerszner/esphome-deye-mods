@@ -32,18 +32,6 @@ substitutions:
 
   enable_sync_time: false # true, false - Enable time sync with HomeAssistant (Deye 3P inverters only)
 
-# WYBÓR TRYBU PRACY (Odkomentuj tylko jeden!)
-  # network_mode: "WIFI" # dla modułu ESP32
-  network_mode: "ETHERNET" # dla modułu WT32-ETH01 lub ESP32 + LAN8720
-
-  # ===== MODUŁY – włącz / wyłącz =====
-  enable_ethernet: "true"
-  enable_oled: "true"
-  enable_encoder: "true"
-  enable_sensors: "true"
-  enable_relays: "true"
-  
-
   # ===== ETHERNET (Konfiguracja sprzętowa WT32-ETH01) =====
   # UWAGA: W WT32-ETH01 piny MDC, MDIO i CLK są stałe i nie zmieniamy ich fizycznie.
   eth_mdc_pin: GPIO23
@@ -93,15 +81,10 @@ substitutions:
 esphome:
   name: ${name}
   name_add_mac_suffix: true # To doda automatycznie unikalny SSID i hostname mDNS (np. modbus-gateway-a1b2c3)
-  platformio_options:
-    build_flags:
-      - -DCONFIG_ESP32_WIFI_ENABLED
-      - -DUSE_ETHERNET
-      - -DUSE_WIFI
   friendly_name: "Modbus Gateway"
   project:
     name: "michalwerszner.deye_gateway"
-    version: "1.2.1"
+    version: "1.2.2"
 
 # Set appropriately if using a different board. https://esphome.io/components/#supported-microcontrollers
 esp32:
@@ -111,8 +94,10 @@ esp32:
     version: recommended # Używamy sprawdzonej wersji
     # Możemy dodać optymalizację rozmiaru, jeśli zabraknie miejsca
     sdkconfig_options:
-      CONFIG_ESP32_WIFI_ENABLED: "y"
       CONFIG_ETH_ENABLED: "y"
+
+wifi: !remove
+captive_portal: !remove
 
 ethernet:
   # Konfiguracja jest w Twoim module ethernet.yaml na GitHubie,
@@ -125,35 +110,8 @@ ethernet:
   phy_addr: ${eth_phy_addr}
   power_pin: ${eth_power_pin}
   # Logika statycznego IP pobierana z Twoich globals
-  manual_ip: !lambda |-
-    if (id(network_mode_global) == 4) {
-      auto ip = network::IPAddress::from_string(id(lan_ip).c_str());
-      auto gw = network::IPAddress::from_string(id(lan_gateway).c_str());
-      auto sn = network::IPAddress::from_string(id(lan_mask).c_str());
-      if (ip.has_value()) {
-        network::ManualIP manual;
-        manual.static_ip = *ip;
-        manual.gateway = *gw;
-        manual.subnet = *sn;
-        return manual;
-      }
-    }
-    return {};
-
-# Używamy !extend, aby dopisać id do sekcji wifi stworzonej przez Lewa-Reka
-wifi:
-  id: wifi_component
-  # Nie wpisujemy tu ssid i password - one już tam są dzięki substitutions
-  ap:
-    id: wifi_ap_component
-
 
 packages:
-  # Twój moduł globalny musi iść jako jeden z pierwszych
-  globals:
-    url: https://github.com/MichalWerszner/esphome-deye-mods
-    files: [modules/globals.yaml]
-
   # BAZA OD LEWA-REKA
   pv_inverter:
     url: https://github.com/MichalWerszner/esphome-deye-inverter
@@ -163,13 +121,14 @@ packages:
       # pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P) - WiFi
       pv_inverter/deye_hybrid_3p_lv_lan.yaml # SG0XLP3 Low Voltage (3P) - LAN
       # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
-    refresh: 12h
+    refresh: 0s
 
   # MODUŁY Z GITHUBA 
   my_extension:
     url: https://github.com/MichalWerszner/esphome-deye-mods
     ref: main
     files:
+      - modules/globals.yaml
       - modules/ethernet.yaml
       - modules/oled.yaml
       - modules/encoder.yaml
@@ -226,4 +185,3 @@ uart:
 #  id: modbus1
 #  uart_id: uart_modbus
 #  address: !lambda 'return id(modbus_address).state;'
-
