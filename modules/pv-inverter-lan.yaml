@@ -160,7 +160,8 @@ packages:
     files:
       ### Use the appropriate file for your inverter, uncomment the one you want to use ###
       # pv_inverter/deye_hybrid_1p_lv.yaml # SG0XLP1 Low Voltage (1P)
-      pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P)
+      # pv_inverter/deye_hybrid_3p_lv.yaml # SG0XLP3 Low Voltage (3P) - WiFi
+      pv_inverter/deye_hybrid_3p_lv_lan.yaml # SG0XLP3 Low Voltage (3P) - LAN
       # pv_inverter/deye_hybrid_3p_hv.yaml # SG0XHP3 High Voltage (3P)
     refresh: 12h
 
