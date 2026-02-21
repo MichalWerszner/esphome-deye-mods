@@ -103,7 +103,8 @@ display:
             idx++;
           }
         };
-        draw_relay(1, id(relay1)); // draw_relay(2, id(relay2));
+        draw_relay(1, id(relay1)); 
+        // draw_relay(2, id(relay2));
         // draw_relay(3, id(relay3)); draw_relay(4, id(relay4));
         // ... (analogicznie reszta przekaźników)
         // draw_relay(5, id(relay5)); draw_relay(6, id(relay6));
@@ -111,6 +112,7 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
 
