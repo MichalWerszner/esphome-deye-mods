@@ -2,16 +2,6 @@
 # Globalne zmienne i sensory systemowe
 
 globals:
-  # WiFi Konfiguracja
-  - id: wifi_ssid_global
-    type: std::string
-    restore_value: yes
-    initial_value: '"${wifi_ssid}"' # Bierze z Twoich substitutions na start
-  - id: wifi_password_global
-    type: std::string
-    restore_value: yes
-    initial_value: '"${wifi_password}"'
-  
   # --- Network Mode Control ---
   # 1: LAN DHCP, 2: WiFi DHCP, 3: WiFi AP, 4: Manual Static
   - id: network_mode_global
@@ -71,5 +61,6 @@ sensor:
   - platform: uptime
     id: uptime_sensor
     update_interval: 60s
+
 
 
