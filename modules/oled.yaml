@@ -69,7 +69,7 @@ display:
       // ===== PAGE 2 – INVERTER =====
       if (id(oled_page) == 2) {
         it.printf(0, 0, id(my_font), "Inverter Data");
-        it.printf(0, 12, id(my_font), "Charge %dA", (int)id(max_charge_current).state);
+        it.printf(0, 12, id(my_font), "Charge %dA", (int)id(maximum_battery_charge_current).state);
         it.printf(0, 24, id(my_font), "Sell %dW", (int)id(max_sell_power).state);
         it.printf(0, 36, id(my_font), "Mode: %s", id(system_work_mode).state.c_str());
       }
@@ -78,11 +78,13 @@ display:
       if (id(oled_page) == 3) {
         int y = 0;
         it.print(0, y, id(my_font), "Environment:"); y += 12;
-        if (id(dht_temp).has_state()) {
-          it.printf(0, y, id(my_font), "DHT: %.1fC | %.0f%%", id(dht_temp).state, id(dht_hum).state); y += 12;
-        }
+        ##if (id(dht_temp).has_state()) {
+        ##  it.printf(0, y, id(my_font), "DHT: %.1fC | %.0f%%", id(dht_temp).state, id(dht_hum).state); y += 12;
+        ##}
         if (id(ds18b20_1).has_state()) {
           it.printf(0, y, id(my_font), "DS1: %.1fC", id(ds18b20_1).state);
+        } else {
+          it.print(0, 12, id(my_font), "No sensor");
         }
       }
 
@@ -109,6 +111,7 @@ display:
         // draw_relay(9, id(relay9)); draw_relay(10, id(relay10));
         // draw_relay(11, id(relay11)); draw_relay(12, id(relay12));
       }
+
 
 
 
